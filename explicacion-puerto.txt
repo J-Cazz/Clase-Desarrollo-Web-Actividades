@@ -1,0 +1,6 @@
+Cambiar el puerto no requiere recompilar porque server.port es una propiedad de
+configuración que Spring Boot resuelve al momento de arrancar, no al compilar.
+ El código Java no contiene el número de puerto; lo lee del entorno externo
+ (argumento de línea de comandos, variable de entorno o archivo de propiedades).
+ Por eso el mismo .jar compilado puede correr en cualquier puerto sin volver a
+ pasar por javac.
