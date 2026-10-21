@@ -13,10 +13,19 @@ GET {{baseUrl}}/alumnos
 GET {{baseUrl}}/alumnos/1
 
 ### Actualizar alumno
-PUT {{baseUrl}}/alumnos/1
+PUT {{baseUrl}}/alumnos/4
 Content-Type: application/json
 
-{"nombre":"Ada Byron","correo":"ada.byron@universidad.mx"}
+{"nombre":"Ada Byron","correo":"ada.byron@universidad.mx", "estatus": "BAJA"}
 
 ### Eliminar alumno: 204
 DELETE {{baseUrl}}/alumnos/1
+
+### Listar sin filtro: todos los alumnos, sin importar estatus
+GET {{baseUrl}}/alumnos
+
+### Listar solo ACTIVO
+GET {{baseUrl}}/alumnos?estatus=ACTIVO
+
+### Listar solo BAJA
+GET {{baseUrl}}/alumnos?estatus=BAJA
