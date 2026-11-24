@@ -30,6 +30,11 @@ public class AlumnoService {
         return repository.buscarPorId(id).orElseThrow(() -> new AlumnoNoEncontradoException(id));
     }
 
+    public Alumno buscarPorMatricula(String matricula) {
+        // Usado por "mi expediente": la matrícula viene del principal autenticado, no de un parámetro del cliente.
+        return repository.buscarPorMatricula(matricula).orElseThrow(() -> new AlumnoNoEncontradoException(matricula));
+    }
+
     @Transactional
     public Alumno crear(String matricula, String nombre, String correo) {
         // Esta comprobación mejora el mensaje; el almacén vuelve a proteger unicidad.

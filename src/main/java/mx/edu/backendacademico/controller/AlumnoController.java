@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/v1/alumnos")
@@ -30,7 +32,9 @@ public class AlumnoController {
     @GetMapping
     public List<AlumnoResponse> listar() { return service.listar().stream().map(AlumnoMapper::toResponse).toList(); }
 
+
     // GET consulta sin solicitar cambios de estado de negocio.
+    @PreAuthorize("hasAnyRole('DOCENTE','ADMIN') or @accesoAlumnos.esPropietario(#id, authentication)")
     @GetMapping("/{id}")
     public AlumnoResponse buscar(@PathVariable Long id) { return AlumnoMapper.toResponse(service.buscar(id)); }
 
@@ -52,5 +56,10 @@ public class AlumnoController {
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/mi-expediente")
+    public AlumnoResponse miExpediente(Authentication authentication) {
+        return AlumnoMapper.toResponse(service.buscarPorMatricula(authentication.getName()));
     }
 }

@@ -42,6 +42,13 @@ public class AlumnoRepositoryEnMemoria implements AlumnoRepository {
     }
 
     @Override
+    public synchronized Optional<Alumno> buscarPorMatricula(String matricula) {
+        return datos.values().stream()
+                .filter(a -> a.matricula().equalsIgnoreCase(matricula.strip()))
+                .findFirst();
+    }
+
+    @Override
     public synchronized boolean existePorMatricula(String matricula) {
         return datos.values().stream().anyMatch(a -> a.matricula().equalsIgnoreCase(matricula.strip()));
     }

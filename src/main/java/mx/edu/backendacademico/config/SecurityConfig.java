@@ -1,5 +1,6 @@
 package mx.edu.backendacademico.config;
-
+import mx.edu.backendacademico.service.AlumnoService;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +12,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
+@EnableMethodSecurity
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
     @Bean
@@ -42,5 +43,10 @@ public class SecurityConfig {
                 User.withUsername("alumno").password(encoder.encode("alumno123")).roles("ALUMNO").build(),
                 User.withUsername("docente").password(encoder.encode("docente123")).roles("DOCENTE").build(),
                 User.withUsername("admin").password(encoder.encode("admin123")).roles("ADMIN").build());
+    }
+
+    @Bean("accesoAlumnos")
+    AlumnoAccessEvaluator accesoAlumnos(AlumnoService service) {
+        return new AlumnoAccessEvaluator(service);
     }
 }

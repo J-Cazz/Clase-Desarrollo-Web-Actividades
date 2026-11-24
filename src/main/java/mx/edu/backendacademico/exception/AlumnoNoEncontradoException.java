@@ -6,4 +6,7 @@ public class AlumnoNoEncontradoException extends RuntimeException {
     public AlumnoNoEncontradoException(Long id) {
         super("No existe el alumno con id " + id);
     }
+    public AlumnoNoEncontradoException(String matricula) {
+        super("No existe el alumno con matrícula " + matricula);
+    }
 }

@@ -71,6 +71,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return detalle;
     }
 
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    ProblemDetail accesoDenegado(org.springframework.security.access.AccessDeniedException ex) {
+        return problema(HttpStatus.FORBIDDEN, "ACCESO_DENEGADO", "No tienes permiso para esta operación");
+    }
+
     private ProblemDetail problema(HttpStatus status, String codigo, String mensaje) {
         var detalle = ProblemDetail.forStatusAndDetail(status, mensaje);
         detalle.setTitle(status.getReasonPhrase());
