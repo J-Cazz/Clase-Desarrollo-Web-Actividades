@@ -53,6 +53,11 @@ public class AlumnoJpaAdapter implements AlumnoRepository {
     }
 
     @Override
+    public Optional<Alumno> buscarPorMatricula(String matricula) {
+        return repository.findByMatriculaIgnoreCase(matricula.strip()).map(AlumnoEntity::toDomain);
+    }
+
+    @Override
     public boolean existePorMatricula(String matricula) {
         return repository.existsByMatriculaIgnoreCase(matricula.strip());
     }
