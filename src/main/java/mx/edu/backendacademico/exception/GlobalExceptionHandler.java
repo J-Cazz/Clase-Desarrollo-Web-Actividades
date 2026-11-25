@@ -25,6 +25,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problema(HttpStatus.CONFLICT, "MATRICULA_DUPLICADA", ex.getMessage());
     }
 
+    @ExceptionHandler(ClaveIdempotenciaReutilizadaException.class)
+    ProblemDetail claveReutilizada(ClaveIdempotenciaReutilizadaException ex) {
+        return problema(HttpStatus.CONFLICT, "IDEMPOTENCIA_REUTILIZADA", ex.getMessage());
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers,
