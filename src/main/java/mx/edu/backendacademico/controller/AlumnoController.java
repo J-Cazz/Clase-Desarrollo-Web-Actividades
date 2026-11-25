@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @RestController
 @RequestMapping("/api/v1/alumnos")
@@ -36,9 +37,19 @@ public class AlumnoController {
 
     // El servicio asigna identidad; ResponseEntity publica 201 y Location.
     @PostMapping
-    public ResponseEntity<AlumnoResponse> crear(@RequestBody @Valid CrearAlumnoRequest request) {
-        var creado = service.crear(request.matricula(), request.nombre(), request.correo());
-        return ResponseEntity.created(URI.create("/api/v1/alumnos/" + creado.id())).body(AlumnoMapper.toResponse(creado));
+    public ResponseEntity<AlumnoResponse> crear(
+            @RequestHeader(value = "Idempotency-Key", required = false) String claveIdempotencia,
+            @RequestBody @Valid CrearAlumnoRequest request) {
+        if (claveIdempotencia == null || claveIdempotencia.isBlank()) {
+            var creado = service.crear(request.matricula(), request.nombre(), request.correo());
+            return ResponseEntity.created(URI.create("/api/v1/alumnos/" + creado.id())).body(AlumnoMapper.toResponse(creado));
+        }
+        var resultado = service.crearIdempotente(claveIdempotencia, request.matricula(), request.nombre(), request.correo());
+        var ubicacion = URI.create("/api/v1/alumnos/" + resultado.alumno().id());
+        var cuerpo = AlumnoMapper.toResponse(resultado.alumno());
+        return resultado.creadoAhora()
+                ? ResponseEntity.created(ubicacion).body(cuerpo)
+                : ResponseEntity.ok().location(ubicacion).body(cuerpo);
     }
 
     // PUT sustituye todos los campos de la representación editable.
