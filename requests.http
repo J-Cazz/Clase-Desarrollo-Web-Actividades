@@ -1,6 +1,6 @@
 # Cuentas conocidas de laboratorio. Mantén las cookies habilitadas en HTTP Client.
 # 1. Ejecuta GET /csrf como docente. 2. Copia token a csrf. 3. Conserva JSESSIONID.
-@csrf = COPIA_EL_TOKEN_DE_LA_RESPUESTA
+@csrf = iiN5MuIf5Gc06Ql6Lp5181zJjMS_R5u134w-bGc7EQ2vpQW5vBZAVNp50lUZjGtJF7NBwmnwoabdfq-YurkOXwYOJj-XlDPb
 
 ### Saludo público
 GET http://localhost:8080/api/v1/saludo
@@ -42,3 +42,20 @@ Authorization: Basic docente docente123
 DELETE http://localhost:8080/api/v1/alumnos/2
 Authorization: Basic docente docente123
 X-CSRF-TOKEN: {{csrf}}
+
+### Salud pública sin detalles internos
+GET http://localhost:8080/actuator/health
+
+### Readiness comprueba también PostgreSQL
+GET http://localhost:8080/actuator/health/readiness
+###Prueba liveness
+GET http://localhost:8080/actuator/health/liveness
+
+### Métricas reservadas a ADMIN
+GET http://localhost:8080/actuator/metrics/cache.gets
+Authorization: Basic admin admin123
+
+
+### Vuelve a pedir la métrica, ahora filtrando por esas etiquetas
+GET http://localhost:8080/actuator/metrics/cache.gets?tag=cache:alumnos&tag=result:miss
+Authorization: Basic admin admin123
