@@ -11,8 +11,11 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import mx.edu.backendacademico.service.AlumnoService;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 @Configuration(proxyBeanMethods = false)
+@EnableMethodSecurity
 public class SecurityConfig {
     @Bean
     SecurityFilterChain security(HttpSecurity http) throws Exception {
@@ -39,10 +42,17 @@ public class SecurityConfig {
 
     @Bean
     UserDetailsService users(PasswordEncoder encoder) {
-        // Cuentas públicas de laboratorio; no contienen credenciales reales.
         return new InMemoryUserDetailsManager(
                 User.withUsername("alumno").password(encoder.encode("alumno123")).roles("ALUMNO").build(),
                 User.withUsername("docente").password(encoder.encode("docente123")).roles("DOCENTE").build(),
-                User.withUsername("admin").password(encoder.encode("admin123")).roles("ADMIN").build());
+                User.withUsername("admin").password(encoder.encode("admin123")).roles("ADMIN").build(),
+                // Cuenta de laboratorio cuyo nombre de usuario coincide con una matrícula real,
+                // para poder demostrar la regla de acceso por propietario con curl/PowerShell.
+                User.withUsername("A001").password(encoder.encode("a001123")).roles("ALUMNO").build());
+    }
+
+    @Bean("accesoAlumnos")
+    AlumnoAccessEvaluator accesoAlumnos(AlumnoService service) {
+        return new AlumnoAccessEvaluator(service);
     }
 }
